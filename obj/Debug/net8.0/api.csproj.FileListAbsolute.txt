@@ -133,3 +133,4 @@
 /home/aayush-krk/Programming/Dotnet/BackEndWithDotNet/api/bin/Debug/net8.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /home/aayush-krk/Programming/Dotnet/BackEndWithDotNet/api/bin/Debug/net8.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /home/aayush-krk/Programming/Dotnet/BackEndWithDotNet/api/bin/Debug/net8.0/runtimes/browser/lib/net8.0/System.Text.Encodings.Web.dll
+/home/aayush-krk/Programming/Dotnet/BackEndWithDotNet/api/obj/Debug/net8.0/api.sourcelink.json
