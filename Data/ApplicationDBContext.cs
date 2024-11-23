@@ -18,7 +18,7 @@ namespace api.Data
             /* In C#, the syntax : DbContext() or : base() is known as "constructor chaining" or "constructor delegation". This is a mechanism used in object-oriented programming to call the constructor of a base class from a derived class constructor. */
         }
 
-        /* Now, we need to add these tables, that we're talking about */
+        /* Now, we're adding the table in the database*/
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Comment> Comments { get; set; }
     }
