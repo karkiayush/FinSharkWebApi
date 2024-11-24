@@ -1,6 +1,8 @@
 /* This is a builder that is going to control things like dependency injection, it's going to provide you with services & various things that you can add in your program. Almost like a module.*/
 
 using api.Data;
+using api.Interface;
+using api.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
     }
 );
+builder.Services.AddScoped<IStockRepository, StockRepository>();
 
 var app = builder.Build();
 
