@@ -86,6 +86,21 @@ namespace api.Controllers
             _context.SaveChanges();
             return Ok(stockModel.ToStockDto());
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            /* If we're sure that we gonna use the primary key for searching the record, it is recommended to use the Find() method.
+            But if we're using any parameter other than the primary key for searching the record, we must use FirstOrDefault() method. */
+            var stockModel = _context.Stocks.Find(id);
+            if (stockModel == null)
+            {
+                return NotFound();
+            }
+            _context.Stocks.Remove(stockModel);
+            _context.SaveChanges();
+            return NoContent();
+        }
     }
 }
 
