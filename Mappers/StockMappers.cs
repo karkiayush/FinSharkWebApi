@@ -29,6 +29,8 @@ namespace api.Mappers
 
         public static Stock ToStockFromCreateDTO(this CreateStockRequestDto stockDto)
         {
+            /* The this keyword in the parameter (this CreateStockRequestDto stockDto) makes it an extension method for CreateStockRequestDto.
+            This allows you to invoke the method on any instance of CreateStockRequestDto */
             return new Stock
             {
                 Symbol = stockDto.Symbol,

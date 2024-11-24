@@ -48,11 +48,24 @@ namespace api.Controllers
         public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
         {
             // since when doing the post request, we gonna pass the data as the json in the body, but not as url.
-
             var stockModel = stockDto.ToStockFromCreateDTO();
+
+            // Adding data to the database
+            /* Adds the stockModel instance to the in-memory change tracker of the Entity Framework Core (EF Core) context. */
             _context.Stocks.Add(stockModel);
+            /* commits all changes tracked by the EF Core context to the database, inserting a new record into the Stocks table. */
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetById), new { id = stockModel.Id }, stockModel.ToStockDto());
+
+            /* CreatedAtAction is an ASP.NET Core helper method that simplifies returning a 201 Created response. */
+            return CreatedAtAction(
+                /* actionName: The name of the controller method that handles GET requests for the created resource (in this case, GetById). */
+                nameof(GetById),
+                /*  The parameters required by the GetById method (e.g., the ID of the resource). */
+                new { id = stockModel.Id },
+                /* value: The resource data you want to include in the response body (e.g., the created stockModel). */
+                stockModel.ToStockDto()
+            );
         }
     }
 }
+
