@@ -41,25 +41,19 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var stock = await _stockRepo.FindStockAsync(id);
-            if (stock == null)
+            var stock = await _stockRepo.GetByIdAsync(id);
+            if (stock != null)
             {
-                return NotFound();
+                return Ok(stock.ToStockDto());
             }
-            return Ok(stock.ToStockDto());
+            return NotFound();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
         {
-            // since when doing the post request, we gonna pass the data as the json in the body, but not as url.
             var stockModel = stockDto.ToStockFromCreateDTO();
-
-            // Adding data to the database
-            /* Adds the stockModel instance to the in-memory change tracker of the Entity Framework Core (EF Core) context. */
-            await _stockRepo.AddModelAsync(stockModel);
-            /* commits all changes tracked by the EF Core context to the database, inserting a new record into the Stocks table. */
-            await _stockRepo.SaveChangesAsync();
+            await _stockRepo.CreateAsync(stockModel);
 
             /* CreatedAtAction is an ASP.NET Core helper method that simplifies returning a 201 Created response. */
             return CreatedAtAction(
@@ -76,36 +70,23 @@ namespace api.Controllers
         // [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateStockDto)
         {
-            var stockModel = await _stockRepo.FindStockAsync(id);
-            if (stockModel == null)
+            var stockModel = await _stockRepo.UpdateAsync(id, updateStockDto);
+            if (stockModel != null)
             {
-                return NotFound();
+                return Ok(stockModel.ToStockDto());
             }
-            stockModel.Symbol = updateStockDto.Symbol;
-            stockModel.CompanyName = updateStockDto.CompanyName;
-            stockModel.Purchase = updateStockDto.Purchase;
-            stockModel.LastDiv = updateStockDto.LastDiv;
-            stockModel.Industry = updateStockDto.Industry;
-            stockModel.MarketCap = updateStockDto.MarketCap;
-
-            await _stockRepo.SaveChangesAsync();
-            return Ok(stockModel.ToStockDto());
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            /* If we're sure that we gonna use the primary key for searching the record, it is recommended to use the Find() method.
-            But if we're using any parameter other than the primary key for searching the record, we must use FirstOrDefault() method. */
-            var stockModel = await _stockRepo.FindStockAsync(id);
-            if (stockModel == null)
+            var stockModel = await _stockRepo.DeleteStock(id);
+            if (stockModel != null)
             {
-                return NotFound();
-
+                return NoContent();
             }
-            _stockRepo.DeleteStock(stockModel);
-            await _stockRepo.SaveChangesAsync();
-            return NoContent();
+            return NotFound();
         }
     }
 }
