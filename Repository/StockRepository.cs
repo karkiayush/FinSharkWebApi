@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Dtos.Stock;
 using api.Interface;
 using api.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -26,29 +28,50 @@ namespace api.Repository
         public Task<List<Stock>> GetAllAsync()
         {
             // why do we need to invoke ToList() method
-
             // This is something called "Deferred Execution". If we don't invoked ToList() method, it'll return us a list like obj but don't make sql query on the fly, so for making the sql query and executing it, we're using .toList() method
             return _context.Stocks.ToListAsync();
         }
 
-        public Task<Stock?> FindStockAsync(int id)
+        public Task<Stock?> GetByIdAsync(int id)
         {
-            /* FindAsync returns a ValueTask<Stock?>, while your method signature expects a Task<Stock>. A ValueTask is different from a Task, and you can't directly assign or return one where the other is expected. */
             return _context.Stocks.FindAsync(id).AsTask();
         }
 
-        public ValueTask<EntityEntry<Stock>> AddModelAsync(Stock model)
+        public async Task<Stock> CreateAsync(Stock model)
         {
-            return _context.Stocks.AddAsync(model);
-        }
-        public Task<int> SaveChangesAsync()
-        {
-            return _context.SaveChangesAsync();
+            await _context.Stocks.AddAsync(model);
+            await _context.SaveChangesAsync();
+            return model;
         }
 
-        public EntityEntry<Stock> DeleteStock(Stock stockModel)
+        public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto updateStockRqstDto)
         {
-            return _context.Stocks.Remove(stockModel);
+            var stockModel = await _context.Stocks.FindAsync(id);
+            if (stockModel == null)
+            {
+                return null;
+            }
+            stockModel.CompanyName = updateStockRqstDto.CompanyName;
+            stockModel.Purchase = updateStockRqstDto.Purchase;
+            stockModel.Purchase = updateStockRqstDto.Purchase;
+            stockModel.LastDiv = updateStockRqstDto.LastDiv;
+            stockModel.Industry = updateStockRqstDto.Industry;
+            stockModel.MarketCap = updateStockRqstDto.MarketCap;
+
+            await _context.SaveChangesAsync();
+            return stockModel;
+        }
+
+        public async Task<Stock?> DeleteStock(int id)
+        {
+            var stockModel = await _context.Stocks.FindAsync(id);
+            if (stockModel == null)
+            {
+                return null;
+            }
+            _context.Stocks.Remove(stockModel);
+            await _context.SaveChangesAsync();
+            return stockModel;
         }
     }
 }
