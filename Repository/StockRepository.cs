@@ -29,12 +29,13 @@ namespace api.Repository
         {
             // why do we need to invoke ToList() method
             // This is something called "Deferred Execution". If we don't invoked ToList() method, it'll return us a list like obj but don't make sql query on the fly, so for making the sql query and executing it, we're using .toList() method
-            return _context.Stocks.ToListAsync();
+            // return _context.Stocks.ToListAsync();
+            return _context.Stocks.Include(c => c.Comments).ToListAsync();
         }
 
         public Task<Stock?> GetByIdAsync(int id)
         {
-            return _context.Stocks.FindAsync(id).AsTask();
+            return _context.Stocks.Include(c => c.Comments).FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<Stock> CreateAsync(Stock model)
@@ -42,7 +43,7 @@ namespace api.Repository
             await _context.Stocks.AddAsync(model);
             await _context.SaveChangesAsync();
             return model;
-        }
+        }   
 
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto updateStockRqstDto)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Dtos.Comment;
 using api.Interface;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -30,5 +31,25 @@ namespace api.Controllers
             var commentDto = commentList.Select(s => s.ToCommentDto());
             return Ok(commentDto);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCommentById(int id)
+        {
+            var comment = await _commentRepository.GetCommentByIdAsync(id);
+            if (comment != null) { return Ok(comment.ToCommentDto()); }
+            return NotFound();
+        }
+
+       /*  [HttpPost]
+        public async Task<IActionResult> CreateComment([FromBody] CreateCommentRequestDto commentDto)
+        {
+            var commentModel = commentDto.ToCommentFromCreateDTO();
+            await _commentRepository.CreateCommentAsync(commentModel);
+            return CreatedAtAction(
+                nameof(GetCommentById),
+                new { id = commentModel.Id },
+                commentModel.ToCommentDto()
+            );
+        } */
     }
 }
